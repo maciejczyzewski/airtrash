@@ -13,16 +13,17 @@
 #include <vector>
 
 #include "config.h"
-#include "netsys.h"
+#include "net.h"
 #include "pipe.h"
 #include "socket.h"
 #include "util.h"
+#include "core.h"
 
 typedef std::string str;
 
-#define HANDLE_RET close(sock); return;
+#define CLOSE_AND_RETURN close(sock); return;
 
-void handle(int sock, Address client_address, str path) {
+void core_handle(int sock, Address client_address, str path) {
   printf("(SERVER) pull request from %s:%d\n", client_address.ip.c_str(),
          client_address.port);
 
@@ -31,19 +32,19 @@ void handle(int sock, Address client_address, str path) {
 
   if (strcmp(data.c_str(), "scan") == 0) {
     pipe_fast_send(sock, str(AIRTRASH_MAGICWORD) + "|" + path);
-    HANDLE_RET;
+    CLOSE_AND_RETURN;
   }
 
   if (strcmp(data.c_str(), "pull") != 0) {
     printf("(SERVER) not implemented behavior\n");
-    HANDLE_RET;
+    CLOSE_AND_RETURN;
   }
 
   FILE *fp = fopen(path.c_str(), "rb");
   if (fp == NULL) {
       printf("(SERVER) \033[91mERROR: error opening file `%s`\033[m\n",
          path.c_str());
-    HANDLE_RET;
+    CLOSE_AND_RETURN;
   }
 
   unsigned char buff[AIRTRASH_BUFFER_SIZE];
@@ -69,13 +70,13 @@ void handle(int sock, Address client_address, str path) {
     }
   }
 
-  HANDLE_RET;
+  CLOSE_AND_RETURN;
 }
 
-void server_func(Address address, str path) {
+void core_server_hook(Address address, str path) {
   int sock;
   Address client_address = Address();
-  Socket socket = Socket(netsys_first_free_slot(address));
+  Socket socket = Socket(net_first_free_slot(address));
   socket.fullduplex();
 
   while (true) {
@@ -86,13 +87,13 @@ void server_func(Address address, str path) {
     }
 
     client_address.propagate();
-    handle(sock, client_address, path);
+    core_handle(sock, client_address, path);
   }
 
   socket.close();
 }
 
-void client_func(Address address, str path) {
+void core_client_hook(Address address, str path) {
   FILE *fp = fopen(path.c_str(), "wb");
   if (NULL == fp) {
     printf("(CLIENT) \033[91mERROR: error opening file `%s`\033[m\n",

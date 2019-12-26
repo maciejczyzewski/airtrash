@@ -11,14 +11,14 @@
 #include <unistd.h>
 #include <vector>
 
-#include "netsys.h"
+#include "net.h"
 #include "pipe.h"
 #include "socket.h"
 #include "util.h"
 
-// FIXME: netsys -> net
+// FIXME: net -> net
 
-str netsys_local_ip() {
+str net_local_ip() {
   struct ifaddrs *ifAddrStruct = NULL;
   struct ifaddrs *ifa = NULL;
   void *tmpAddrPtr = NULL;
@@ -44,7 +44,7 @@ str netsys_local_ip() {
     freeifaddrs(ifAddrStruct);
 }
 
-str netsys_local_mask() {
+str net_local_mask() {
   struct ifaddrs *ifap, *ifa;
   struct sockaddr_in *sa;
   char *addr;
@@ -64,7 +64,7 @@ str netsys_local_mask() {
   return str("");
 }
 
-std::deque<str> netsys_range(str ip, str mask) {
+std::deque<str> net_range(str ip, str mask) {
   struct in_addr ipaddress, subnetmask;
 
   inet_pton(AF_INET, ip.c_str(), &ipaddress);
@@ -82,7 +82,7 @@ std::deque<str> netsys_range(str ip, str mask) {
   return vec_ips;
 }
 
-str netsys_is_open(str ip, int port) {
+str net_is_open(str ip, int port) {
   struct sockaddr_in address; /* the libc network address data structure */
   short int sock = -1;        /* file descriptor for the network socket */
   fd_set fdset;
@@ -123,9 +123,9 @@ str netsys_is_open(str ip, int port) {
   return status;
 }
 
-Address netsys_first_free_slot(Address address) {
+Address net_first_free_slot(Address address) {
   while (true) {
-    if (strcmp(netsys_is_open(address.ip, address.port).c_str(), "") ==
+    if (strcmp(net_is_open(address.ip, address.port).c_str(), "") ==
         0) break;
     address.set_port(address.port + 1);
   }

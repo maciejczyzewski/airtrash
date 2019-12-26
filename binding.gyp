@@ -5,7 +5,8 @@
       "sources": [
         "airtrash.cc",
         "api.cc",
-        "netsys.cc",
+        "net.cc",
+        "core.cc",
         "util.cc",
         "pipe.cc",
         "socket.cc"
