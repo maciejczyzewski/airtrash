@@ -16,45 +16,24 @@
 
 #define MSG_NOSIGNAL 0x4000
 
-/*
+str pipe_fast_recv(int sock) {
+  str rcv;
   int recvlen = 0;
   char buff[AIRTRASH_BUFFER_SIZE];
   memset(buff, '0', sizeof(buff));
-
-  int tries = AIRTRASH_MAX_TRIES;
-  while (tries > 0) {
-    while ((recvlen =
-                (int)read(socket.sock, buff, AIRTRASH_BUFFER_SIZE)) > 0) {
-      printf("(CLIENT) bytes received %d\n", recvlen);
-      fwrite(buff, sizeof *buff, recvlen, fp);
-      tries = AIRTRASH_MAX_TRIES;
-    }
-    tries--;
-  }
-
-  if (recvlen < 0) {
-    printf("(CLIENT) \033[91mERROR: read error\033[m\n");
-  }
-*/
-
-// FIXME: implement recv
-str pipe_fast_recv(int sock) {
-  std::vector<char> buffer(AIRTRASH_BUFFER_SIZE);
-  str rcv;
-  int bytesReceived = 0;
   do {
-    bytesReceived = (int)recv(sock, &buffer[0], buffer.size(), MSG_NOSIGNAL);
-    if (bytesReceived == -1 || errno == EAGAIN) {
+    recvlen = (int)recv(sock, &buff[0], AIRTRASH_BUFFER_SIZE, MSG_NOSIGNAL);
+    if (recvlen == -1 || errno == EAGAIN) {
       continue;
     }
-    rcv.append(buffer.cbegin(), buffer.cend());
-  } while (bytesReceived == AIRTRASH_BUFFER_SIZE);
+    rcv.append(buff, 0, recvlen);
+  } while (recvlen == AIRTRASH_BUFFER_SIZE);
   return rcv;
 }
 
-bool pipe_send(int sock, unsigned char *buff, int len) {
+bool pipe_send(int sock, unsigned char *buff, int len, int max_tries) {
   int pos = 0, sendlen = 0;
-  int tries = AIRTRASH_MAX_TRIES;
+  int tries = max_tries;
   while (pos < len) {
     if (tries < 0)
       return false;
@@ -63,15 +42,14 @@ bool pipe_send(int sock, unsigned char *buff, int len) {
       tries--;
       continue;
     }
-    tries = AIRTRASH_MAX_TRIES;
+    tries = max_tries;
     pos += sendlen;
   }
   return true;
 }
 
 bool pipe_fast_send(int sock, str buff) {
-  return pipe_send(sock,
-                   reinterpret_cast<unsigned char *>(
-                       const_cast<char *>(buff.c_str())),
-                   buff.size());
+  return pipe_send(
+      sock, reinterpret_cast<unsigned char *>(const_cast<char *>(buff.c_str())),
+      buff.size(), 0);
 }
