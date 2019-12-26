@@ -221,8 +221,6 @@ str port_is_open(str ip, int port) {
   return "";
 }
 
-#include <thread>
-
 void handle(int sock, struct sockaddr_in client_address, str path) {
   printf("client connected with ip address: %s\n",
          inet_ntoa(client_address.sin_addr));
