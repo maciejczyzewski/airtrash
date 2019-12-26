@@ -8,14 +8,15 @@
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <thread>
 #include <unistd.h>
 #include <vector>
 
 #include "config.h"
 #include "netsys.h"
 #include "pipe.h"
-#include "util.h"
 #include "socket.h"
+#include "util.h"
 
 typedef std::string str;
 
@@ -34,9 +35,9 @@ bool send_str2(int sock, unsigned char *data_to_send, int _len) {
   return true;
 }
 
-void handle(int sock, struct sockaddr_in client_address, str path) {
-  printf("client connected with ip address: %s\n",
-         inet_ntoa(client_address.sin_addr));
+void handle(int sock, Address client_address, str path) {
+  printf("client connected with ip address: %s:%d\n", client_address.ip.c_str(),
+         client_address.port);
 
   str data = pipe_fast_recv(sock);
   printf("received: '%s' (new)\n", data.c_str());
@@ -87,26 +88,11 @@ void handle(int sock, struct sockaddr_in client_address, str path) {
 
 class Server {
   Socket socket;
-  Address address;
   str path;
 
 public:
-  Server(Address _address) : address(_address) {
-
-    int shift = 0;
-    // find first empty slot
-    while (true) {
-      if (strcmp(netsys_is_open(address.ip, address.port + shift).c_str(),
-                 "") == 0) {
-        break;
-      } else {
-        shift++;
-      }
-    }
-
-    address.port += shift;
-
-    this->socket = Socket(address);
+  Server(Address address) {
+    this->socket = Socket(netsys_first_free_slot(address));
     this->socket.fullduplex();
   }
 
@@ -118,65 +104,47 @@ public:
   }
 
   void action() {
-    // socket address used to store client address
-    struct sockaddr_in client_address;
-    socklen_t client_address_len = 0;
+    Address client_address = Address();
 
-    // run indefinitely
     while (true) {
-      // open a new socket to transmit data per connection
       int sock;
-      if ((sock = accept(this->socket.sock, (struct sockaddr *)&client_address,
-                         &client_address_len)) < 0) {
+
+      if ((sock = accept(this->socket.sock,
+                         (struct sockaddr *)&client_address.unix_sockaddr,
+                         &client_address.unix_sockaddr_len)) < 0) {
         printf("could not open a socket to accept data\n");
       }
 
-      // new std::thread(std::ref(handle), client_address, this->path);
+      client_address.propagate();
       handle(sock, client_address, this->path);
     }
   }
 };
 
-class Client {
-  Socket socket;
-  Address address;
-  str path;
-
-public:
-  Client(Address _address) : address(_address) {
-    this->socket = Socket(address);
-    this->socket.fullduplex();
+void client_func(Address address, str path) {
+  FILE *fp = fopen(path.c_str(), "wb");
+  if (NULL == fp) {
+    printf("(CLIENT) \033[91mERROR: error opening file `%s`\033[m\n", path.c_str());
+    return;
   }
 
-  void set_path(str _path) { this->path = _path; }
+  Socket socket = Socket(address);
+  socket.fullduplex();
 
-  void do2() {
-    this->action();
-    this->socket.close();
+  pipe_fast_send(socket.sock, "pull");
+
+  int bytesReceived = 0;
+  char buff[AIRTRASH_BUFFER_SIZE];
+  memset(buff, '0', sizeof(buff));
+  while ((bytesReceived = (int)read(socket.sock, buff, AIRTRASH_BUFFER_SIZE)) >
+         0) {
+    printf("(CLIENT) bytes received %d\n", bytesReceived);
+    fwrite(buff, sizeof *buff, bytesReceived, fp);
   }
 
-  void action() {
-    pipe_fast_send(this->socket.sock, "pull");
-
-    /* Create file where data will be stored */
-    FILE *fp = fopen(this->path.c_str(), "wb");
-    if (NULL == fp) {
-      printf("CLIENT \033[94m Error opening file \033[m %s\n",
-             this->path.c_str());
-      // return 1;
-    }
-
-    int bytesReceived = 0;
-    char buff[AIRTRASH_BUFFER_SIZE];
-    memset(buff, '0', sizeof(buff));
-    while ((bytesReceived =
-                (int)read(this->socket.sock, buff, AIRTRASH_BUFFER_SIZE)) > 0) {
-      printf("Bytes received %d\n", bytesReceived);
-      fwrite(buff, sizeof *buff, bytesReceived, fp);
-    }
-
-    if (bytesReceived < 0) {
-      printf("\n Read Error \n");
-    }
+  if (bytesReceived < 0) {
+    printf("(CLIENT) \033[91mERROR: read error\033[m\n");
   }
-};
+
+  socket.close();
+}

@@ -12,8 +12,9 @@
 #include <vector>
 
 #include "netsys.h"
-#include "util.h"
 #include "pipe.h"
+#include "socket.h"
+#include "util.h"
 
 str netsys_local_ip() {
   struct ifaddrs *ifAddrStruct = NULL;
@@ -98,7 +99,7 @@ str netsys_is_open(str ip, int port) {
   FD_ZERO(&fdset);
   FD_SET(sock, &fdset);
   tv.tv_sec = 0; /* timeout */
-  tv.tv_usec = 150;
+  tv.tv_usec = AIRTRASH_TIMEOUT_USEC;
 
   str status = "";
   if (select(sock + 1, NULL, &fdset, NULL, &tv) == 1) {
@@ -118,4 +119,13 @@ str netsys_is_open(str ip, int port) {
 
   close(sock);
   return status;
+}
+
+Address netsys_first_free_slot(Address address) {
+  while (true) {
+    if (strcmp(netsys_is_open(address.ip, address.port).c_str(), "") ==
+        0) break;
+    address.set_port(address.port + 1);
+  }
+  return address;
 }

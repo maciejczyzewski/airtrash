@@ -22,6 +22,7 @@ struct Address {
   int port;
 
   struct sockaddr_in unix_sockaddr;
+  socklen_t unix_sockaddr_len = 0;
 
   Address() { this->unix_sockaddr_init(); }
   Address(str _address) {
@@ -53,6 +54,12 @@ struct Address {
   void unix_sockaddr_update() {
     this->unix_sockaddr.sin_port = htons((__uint16_t)this->port);
     this->unix_sockaddr.sin_addr.s_addr = inet_addr(this->ip.c_str());
+  }
+
+  void propagate() {
+    this->ip = str(inet_ntoa(this->unix_sockaddr.sin_addr));
+    this->port = int(this->unix_sockaddr.sin_port);
+    this->unix_sockaddr_update();
   }
 };
 

@@ -72,7 +72,5 @@ void pull(const Nan::FunctionCallbackInfo<v8::Value> &args) {
   v8::String::Utf8Value arg0(isolate, args[0]);
   v8::String::Utf8Value arg1(isolate, args[1]);
 
-  Client client = Client(Address(str(*arg0)));
-  client.set_path(str(*arg1));
-  client.do2();
+  client_func(Address(str(*arg0)), str(*arg1));
 }
