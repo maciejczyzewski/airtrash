@@ -59,9 +59,7 @@ void push(const Nan::FunctionCallbackInfo<v8::Value> &args) {
   v8::String::Utf8Value arg0(isolate, args[0]);
   v8::String::Utf8Value arg1(isolate, args[1]);
 
-  Server server = Server(Address(str(*arg0)));
-  server.set_path(str(*arg1));
-  server.do2();
+  server_func(Address(str(*arg0)), str(*arg1));
 }
 
 void pull(const Nan::FunctionCallbackInfo<v8::Value> &args) {

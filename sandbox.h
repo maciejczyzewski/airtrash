@@ -20,111 +20,83 @@
 
 typedef std::string str;
 
-bool send_str2(int sock, unsigned char *data_to_send, int _len) {
-  int pos = 0;
-  int len = _len;
-  printf("1[START] pos=%d len=%d\n", pos, len);
-  while (pos < len) {
-    if (pos < 0) {
-      return false;
-    }
-    printf("------> sending | pos=%d | len=%d |\n", pos, len);
-    pos += (int)send(sock, &data_to_send[pos], len - pos, 0);
-  }
-  printf("1[END]\n");
-  return true;
-}
+#define HANDLE_RET close(sock); return;
 
 void handle(int sock, Address client_address, str path) {
-  printf("client connected with ip address: %s:%d\n", client_address.ip.c_str(),
+  printf("(SERVER) pull request from %s:%d\n", client_address.ip.c_str(),
          client_address.port);
 
   str data = pipe_fast_recv(sock);
-  printf("received: '%s' (new)\n", data.c_str());
+  printf("(SERVER) probe cmd=`%s`\n", data.c_str());
+
   if (strcmp(data.c_str(), "scan") == 0) {
-    printf("\033[92m IT's SCAN \033[m");
-    pipe_fast_send(sock, str(AIRTRASH_MAGICWORD) + "|" + path); // FIXME
-    close(sock);
-    return;
-  }
-  if (strcmp(data.c_str(), "pull") != 0) {
-    printf("JAKIS PRZYPALOWIEC?\n");
-    return;
+    pipe_fast_send(sock, str(AIRTRASH_MAGICWORD) + "|" + path);
+    HANDLE_RET;
   }
 
-  /* Open the file that we wish to transfer */
-  printf("---------> want to read `%s`\n", path.c_str());
+  if (strcmp(data.c_str(), "pull") != 0) {
+    printf("(SERVER) not implemented behavior\n");
+    HANDLE_RET;
+  }
+
   FILE *fp = fopen(path.c_str(), "rb");
   if (fp == NULL) {
-    printf("File opern error");
-    // return 1;
+      printf("(SERVER) \033[91mERROR: error opening file `%s`\033[m\n",
+         path.c_str());
+    HANDLE_RET;
   }
-  printf("OKAY, HAVE FILE?\n");
-  /* Read data from file and send it */
-  for (;;) {
-    /* First read file in chunks of AIRTRASH_BUFFER_SIZE bytes */
-    unsigned char buff[AIRTRASH_BUFFER_SIZE];
-    int nread = (int)fread(buff, sizeof *buff, AIRTRASH_BUFFER_SIZE, fp);
-    printf("Bytes read %d \n", nread);
 
-    /* If read was success, send data. */
+  unsigned char buff[AIRTRASH_BUFFER_SIZE];
+  memset(buff, '0', sizeof(buff));
+
+  for (;;) {
+    int nread = (int)fread(buff, sizeof *buff, AIRTRASH_BUFFER_SIZE, fp);
+
     if (nread > 0) {
-      printf("Sending \n");
-      printf("--> %p\n", buff);
-      send_str2(sock, buff, nread);
+      printf("(SERVER) sending nread=%d\n", nread);
+      pipe_send(sock, buff, nread);
     }
 
     if (nread < AIRTRASH_BUFFER_SIZE) {
-      if (feof(fp))
-        printf("End of file\n");
-      if (ferror(fp))
-        printf("Error reading\n");
-      break;
+      if (feof(fp)) {
+        printf("(SERVER) end of file\n");
+        break;
+      }
+      if (ferror(fp)) {
+        printf("(SERVER) \033[91mERROR: error reading file\033[m\n");
+        break;
+      }
     }
   }
 
-  close(sock);
+  HANDLE_RET;
 }
 
-class Server {
-  Socket socket;
-  str path;
+void server_func(Address address, str path) {
+  int sock;
+  Address client_address = Address();
+  Socket socket = Socket(netsys_first_free_slot(address));
+  socket.fullduplex();
 
-public:
-  Server(Address address) {
-    this->socket = Socket(netsys_first_free_slot(address));
-    this->socket.fullduplex();
-  }
-
-  void set_path(str _path) { this->path = _path; }
-
-  void do2() {
-    this->action();
-    this->socket.close();
-  }
-
-  void action() {
-    Address client_address = Address();
-
-    while (true) {
-      int sock;
-
-      if ((sock = accept(this->socket.sock,
-                         (struct sockaddr *)&client_address.unix_sockaddr,
-                         &client_address.unix_sockaddr_len)) < 0) {
-        printf("could not open a socket to accept data\n");
-      }
-
-      client_address.propagate();
-      handle(sock, client_address, this->path);
+  while (true) {
+    if ((sock = accept(socket.sock,
+                       (struct sockaddr *)&client_address.unix_sockaddr,
+                       &client_address.unix_sockaddr_len)) < 0) {
+      printf("could not open a socket to accept data\n");
     }
+
+    client_address.propagate();
+    handle(sock, client_address, path);
   }
-};
+
+  socket.close();
+}
 
 void client_func(Address address, str path) {
   FILE *fp = fopen(path.c_str(), "wb");
   if (NULL == fp) {
-    printf("(CLIENT) \033[91mERROR: error opening file `%s`\033[m\n", path.c_str());
+    printf("(CLIENT) \033[91mERROR: error opening file `%s`\033[m\n",
+           path.c_str());
     return;
   }
 
@@ -133,18 +105,25 @@ void client_func(Address address, str path) {
 
   pipe_fast_send(socket.sock, "pull");
 
-  int bytesReceived = 0;
+  int recvlen = 0;
   char buff[AIRTRASH_BUFFER_SIZE];
   memset(buff, '0', sizeof(buff));
-  while ((bytesReceived = (int)read(socket.sock, buff, AIRTRASH_BUFFER_SIZE)) >
-         0) {
-    printf("(CLIENT) bytes received %d\n", bytesReceived);
-    fwrite(buff, sizeof *buff, bytesReceived, fp);
+
+  int tries = AIRTRASH_MAX_TRIES;
+  while (tries > 0) {
+    while ((recvlen =
+                (int)read(socket.sock, buff, AIRTRASH_BUFFER_SIZE)) > 0) {
+      printf("(CLIENT) bytes received %d\n", recvlen);
+      fwrite(buff, sizeof *buff, recvlen, fp);
+      tries = AIRTRASH_MAX_TRIES;
+    }
+    tries--;
   }
 
-  if (bytesReceived < 0) {
+  if (recvlen < 0) {
     printf("(CLIENT) \033[91mERROR: read error\033[m\n");
   }
 
+  fclose(fp);
   socket.close();
 }

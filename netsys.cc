@@ -16,6 +16,8 @@
 #include "socket.h"
 #include "util.h"
 
+// FIXME: netsys -> net
+
 str netsys_local_ip() {
   struct ifaddrs *ifAddrStruct = NULL;
   struct ifaddrs *ifa = NULL;
