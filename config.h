@@ -3,8 +3,9 @@
 
 #define AIRTRASH_MAGICWORD "lord"
 
-const int BUF_SIZE = 2020;
+const int AIRTRASH_BUFFER_SIZE = 2020;
 const int AIRTRASH_PORT_LOW = 9000;
 const int AIRTRASH_PORT_HIGH = 9100;
+const int AIRTRASH_WAIT_SIZE = 16;
 
 #endif
