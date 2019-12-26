@@ -1,3 +1,5 @@
+![airtrash](screen.png)
+
 https://github.com/cowbell/sharedrop
 https://github.com/seemoo-lab/opendrop
 https://github.com/donkeysharp/gocho
