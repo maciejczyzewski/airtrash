@@ -1,7 +1,7 @@
 #include "api.h"
 #include "sandbox.h"
 
-#define CHECK_ARGS_2                                                           \
+#define V8_CHECK_ARGS_2                                                        \
   if (args.Length() < 2) {                                                     \
     isolate->ThrowException(v8::Exception::TypeError(                          \
         v8::String::NewFromUtf8(isolate, "Wrong number of arguments",          \
@@ -20,24 +20,24 @@
 
 void get_local_ip(const Nan::FunctionCallbackInfo<v8::Value> &args) {
   args.GetReturnValue().Set(
-      Nan::New<v8::String>(get_local_ip()).ToLocalChecked());
+      Nan::New<v8::String>(netsys_local_ip()).ToLocalChecked());
 }
 
 void scan(const Nan::FunctionCallbackInfo<v8::Value> &args) {
   printf("[[[\033[92mSCAN\033[m]]]\n");
 
   str protocol = "";
-  str local_ip = get_local_ip();
-  str local_mask = get_local_mask();
+  str local_ip = netsys_local_ip();
+  str local_mask = netsys_local_mask();
 
   printf("local_ip=%s\n", local_ip.c_str());
   printf("local_mask=%s\n\n", local_mask.c_str());
 
-  for (str ip : get_ips_in_range(local_ip, local_mask)) {
+  for (str ip : netsys_range(local_ip, local_mask)) {
     printf("[%s]\n", ip.c_str());
-    for (int port = PORT_LOW; port < PORT_HIGH; port++) {
+    for (int port = AIRTRASH_PORT_LOW; port < AIRTRASH_PORT_HIGH; port++) {
       printf(".");
-      str filename = port_is_open(ip, port);
+      str filename = netsys_is_open(ip, port);
       if (strcmp(filename.c_str(), "") != 0) {
         printf("\n\033[92mOPEN\033[m %s:%d file=%s\n", ip.c_str(), port,
                filename.c_str());
@@ -54,7 +54,7 @@ void scan(const Nan::FunctionCallbackInfo<v8::Value> &args) {
 void push(const Nan::FunctionCallbackInfo<v8::Value> &args) {
   v8::Isolate *isolate = args.GetIsolate();
 
-  CHECK_ARGS_2;
+  V8_CHECK_ARGS_2;
 
   v8::String::Utf8Value arg0(isolate, args[0]);
   v8::String::Utf8Value arg1(isolate, args[1]);
@@ -67,7 +67,7 @@ void push(const Nan::FunctionCallbackInfo<v8::Value> &args) {
 void pull(const Nan::FunctionCallbackInfo<v8::Value> &args) {
   v8::Isolate *isolate = args.GetIsolate();
 
-  CHECK_ARGS_2;
+  V8_CHECK_ARGS_2;
 
   v8::String::Utf8Value arg0(isolate, args[0]);
   v8::String::Utf8Value arg1(isolate, args[1]);

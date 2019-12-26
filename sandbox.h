@@ -11,9 +11,10 @@
 #include <unistd.h>
 #include <vector>
 
+#include "config.h"
 #include "netsys.h"
-
-const int BUF_SIZE = 2020;
+#include "pipe.h"
+#include "util.h"
 
 typedef std::string str;
 
@@ -23,13 +24,8 @@ struct Address {
 
   Address() {}
   Address(str plain_adress) {
-    str plain_ip = plain_adress.substr(0, plain_adress.find(":"));
-    str plain_port =
-        plain_adress.substr(plain_adress.find(":") + 1, plain_adress.size());
-    this->ip = plain_ip;
-    printf("debug -----> plain_ip=%s\n", plain_ip.c_str());
-    printf("debug -----> plain_port=%s\n", plain_port.c_str());
-    this->port = std::stoi(plain_port);
+    this->ip = plain_adress.substr(0, plain_adress.find(":"));
+    this->port = std::stoi(remove_to(plain_adress, ":", 0));
   }
 };
 
@@ -116,21 +112,6 @@ public:
   void do_close() { close(this->sock); }
 };
 
-bool send_str(int sock, str data_to_send) {
-  int pos = 0;
-  int len = (int)data_to_send.size();
-  printf("1[START] pos=%d len=%d\n", pos, len);
-  while (pos < len) {
-    if (pos < 0) {
-      return false;
-    }
-    printf("------> sending | pos=%d | len=%d |\n", pos, len);
-    pos += (int)send(sock, data_to_send.substr(pos).c_str(), len - pos, 0);
-  }
-  printf("1[END]\n");
-  return true;
-}
-
 bool send_str2(int sock, unsigned char *data_to_send, int _len) {
   int pos = 0;
   int len = _len;
@@ -146,90 +127,15 @@ bool send_str2(int sock, unsigned char *data_to_send, int _len) {
   return true;
 }
 
-str recv_str(int sock) {
-  // create the buffer with space for the data
-  const unsigned int MAX_BUF_LENGTH = 4096;
-  std::vector<char> buffer(MAX_BUF_LENGTH);
-  str rcv;
-  int bytesReceived = 0;
-  do {
-    bytesReceived = (int)recv(sock, &buffer[0], buffer.size(), 0);
-    // append string from buffer.
-    if (bytesReceived == -1) {
-      // error
-    } else {
-      rcv.append(buffer.cbegin(), buffer.cend());
-    }
-  } while (bytesReceived == MAX_BUF_LENGTH);
-  return rcv;
-}
-
-str port_is_open(str ip, int port) {
-  struct sockaddr_in address; /* the libc network address data structure */
-  short int sock = -1;        /* file descriptor for the network socket */
-  fd_set fdset;
-  struct timeval tv;
-
-  address.sin_family = AF_INET;
-  address.sin_addr.s_addr = inet_addr(ip.c_str()); /* assign the address */
-  address.sin_port = htons(port);
-
-  /* translate int2port num */
-  sock = socket(AF_INET, SOCK_STREAM, 0);
-  fcntl(sock, F_SETFL, O_NONBLOCK);
-
-  connect(sock, (struct sockaddr *)&address, sizeof(address));
-
-  FD_ZERO(&fdset);
-  FD_SET(sock, &fdset);
-  tv.tv_sec = 0; /* timeout */
-  tv.tv_usec = 150;
-
-  if (select(sock + 1, NULL, &fdset, NULL, &tv) == 1) {
-    int so_error;
-    socklen_t len = sizeof so_error;
-
-    getsockopt(sock, SOL_SOCKET, SO_ERROR, &so_error, &len);
-
-    if (so_error == 0) {
-      str status = "";
-
-      fcntl(sock, F_SETFL, O_EXLOCK);
-
-      printf("podejrzewam [%d]\n", port);
-      send_str(sock, "scan");
-      str data = recv_str(sock);
-      printf("@ %s:%d '%s' (public)\n", ip.c_str(), port, data.c_str());
-      if (data.find("lord") != std::string::npos) {
-        // status = data;
-        status = data.substr(data.find("lord") + 4 + 1, data.size());
-        printf("----------->[%s]\n", status.c_str());
-      } else {
-        status = "";
-      }
-
-      close(sock);
-      return status;
-    } else {
-      close(sock);
-      return "";
-      // return false;
-    }
-  }
-  close(sock);
-  // return false;
-  return "";
-}
-
 void handle(int sock, struct sockaddr_in client_address, str path) {
   printf("client connected with ip address: %s\n",
          inet_ntoa(client_address.sin_addr));
 
-  str data = recv_str(sock);
+  str data = pipe_fast_recv(sock);
   printf("received: '%s' (new)\n", data.c_str());
   if (strcmp(data.c_str(), "scan") == 0) {
     printf("\033[92m IT's SCAN \033[m");
-    send_str(sock, "lord|" + path); // FIXME
+    pipe_fast_send(sock, str(AIRTRASH_MAGICWORD) + "|" + path); // FIXME
     close(sock);
     return;
   }
@@ -283,7 +189,7 @@ public:
     int shift = 0;
     // find first empty slot
     while (true) {
-      if (strcmp(port_is_open(address.ip, address.port + shift).c_str(), "") ==
+      if (strcmp(netsys_is_open(address.ip, address.port + shift).c_str(), "") ==
           0) {
         break;
       } else {
@@ -344,7 +250,7 @@ public:
   }
 
   void action() {
-    send_str(this->socket.sock, "pull");
+    pipe_fast_send(this->socket.sock, "pull");
 
     /* Create file where data will be stored */
     FILE *fp = fopen(this->path.c_str(), "wb");

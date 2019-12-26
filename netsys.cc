@@ -12,8 +12,10 @@
 #include <vector>
 
 #include "netsys.h"
+#include "util.h"
+#include "pipe.h"
 
-str get_local_ip() {
+str netsys_local_ip() {
   struct ifaddrs *ifAddrStruct = NULL;
   struct ifaddrs *ifa = NULL;
   void *tmpAddrPtr = NULL;
@@ -39,7 +41,7 @@ str get_local_ip() {
     freeifaddrs(ifAddrStruct);
 }
 
-str get_local_mask() {
+str netsys_local_mask() {
   struct ifaddrs *ifap, *ifa;
   struct sockaddr_in *sa;
   char *addr;
@@ -54,11 +56,12 @@ str get_local_mask() {
       return str(addr);
     }
   }
-  return str("");
+
   freeifaddrs(ifap);
+  return str("");
 }
 
-std::deque<str> get_ips_in_range(str ip, str mask) {
+std::deque<str> netsys_range(str ip, str mask) {
   struct in_addr ipaddress, subnetmask;
 
   inet_pton(AF_INET, ip.c_str(), &ipaddress);
@@ -74,4 +77,45 @@ std::deque<str> get_ips_in_range(str ip, str mask) {
   }
 
   return vec_ips;
+}
+
+str netsys_is_open(str ip, int port) {
+  struct sockaddr_in address; /* the libc network address data structure */
+  short int sock = -1;        /* file descriptor for the network socket */
+  fd_set fdset;
+  struct timeval tv;
+
+  address.sin_family = AF_INET;
+  address.sin_addr.s_addr = inet_addr(ip.c_str()); /* assign the address */
+  address.sin_port = htons(port);
+
+  /* translate int2port num */
+  sock = socket(AF_INET, SOCK_STREAM, 0);
+  fcntl(sock, F_SETFL, O_NONBLOCK);
+
+  connect(sock, (struct sockaddr *)&address, sizeof(address));
+
+  FD_ZERO(&fdset);
+  FD_SET(sock, &fdset);
+  tv.tv_sec = 0; /* timeout */
+  tv.tv_usec = 150;
+
+  str status = "";
+  if (select(sock + 1, NULL, &fdset, NULL, &tv) == 1) {
+    int so_error;
+    socklen_t len = sizeof so_error;
+    getsockopt(sock, SOL_SOCKET, SO_ERROR, &so_error, &len);
+    fcntl(sock, F_SETFL, O_EXLOCK);
+
+    if (so_error == 0) {
+      printf("\n\033[90mchecking peer [%d]\033[m\n", port);
+      pipe_fast_send(sock, "scan");
+      str data = pipe_fast_recv(sock);
+      if (data.find(AIRTRASH_MAGICWORD) != std::string::npos)
+        status = remove_to(data, AIRTRASH_MAGICWORD);
+    }
+  }
+
+  close(sock);
+  return status;
 }

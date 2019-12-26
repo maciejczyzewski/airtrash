@@ -3,11 +3,7 @@
 
 #include <nan.h>
 
-// Example top-level functions. These functions demonstrate how to return
-// various js types. Implementations are in functions.cc
-
-const int PORT_LOW = 9000;
-const int PORT_HIGH = 9100;
+#include "config.h"
 
 NAN_METHOD(scan);
 NAN_METHOD(push);
