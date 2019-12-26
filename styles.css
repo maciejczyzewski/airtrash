@@ -1,0 +1,81 @@
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+}
+
+ol,
+.table {
+  margin-bottom: 0rem;
+}
+
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+
+  position: absolute;
+  right: 0;
+  left: 0;
+}
+
+.box .section.header {
+  flex: 0 1 auto;
+  display: block;
+}
+
+.box .section.content {
+  flex: 1 1 auto;
+  min-height: 175px;
+}
+
+#dropzone {
+  background-color: #f5f5f5;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  box-shadow: inset 0px 2px 13px 2px grey;
+  border: 3px dashed black;
+  min-height: 175px;
+  display: flex;
+}
+
+.icon {
+  display: block;
+  text-align: center;
+  margin: 0 auto;
+  height: 5em;
+  margin-bottom: 0.5em;
+}
+
+#files {
+  word-wrap: break-word;
+}
+
+#files .long-address {
+  max-width: 140px;
+}
+
+#files .long-path {
+  text-overflow: ellipsis;
+  max-width: 350px;
+}
+
+#files a {
+  float: right;
+}
+
+.bg-success-own {
+  background: #d0ffd1 !important;
+}
+
+.table tbody + tbody {
+  border-top: 3px dashed #000000 !important;
+}
+
+.container {
+  margin-top: auto;
+  margin-bottom: auto;
+}

@@ -1,3 +1,26 @@
+https://github.com/cowbell/sharedrop
+https://github.com/seemoo-lab/opendrop
+https://github.com/donkeysharp/gocho
+https://nitroshare.net/
+https://github.com/Jery-Mong/flyfile
+
+```
+https://nodejs.org/api/addons.html
+https://blog.logrocket.com/node-js-multithreading-what-are-worker-threads-and-why-do-they-matter-48ab102f8b10/
+
+yarn run configure
+yarn run build
+yarn run start
+yarn run dist
+
+yarn add electron-builder
+yarn add bindings
+yarn add nan
+
+yarn add electron-rebuild --dev
+./node_modules/.bin/electron-rebuild
+```
+
 # electron-quick-start
 
 **Clone and run for a quick way to see Electron in action.**

@@ -1,22 +1,53 @@
 {
-  "name": "electron-quick-start",
-  "version": "1.0.0",
-  "description": "A minimal Electron application",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron ."
-  },
-  "repository": "https://github.com/electron/electron-quick-start",
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
-  "devDependencies": {
-    "electron": "^7.1.7"
-  }
+    "name": "airtrash",
+    "version": "1.0.0",
+    "description": "?",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder",
+        "build": "node-gyp build",
+        "configure": "node-gyp configure",
+        "postinstall": "electron-builder install-app-deps && ./node_modules/.bin/electron-rebuild"
+    },
+    "build": {
+        "files": [
+            "**/*",
+            "build/Release/*"
+        ],
+        "nodeGypRebuild": true,
+        "asarUnpack": "build/Release/*",
+        "appId": "maciejczyzewski.airtrash",
+        "mac": {
+            "icon": "icon.png",
+            "category": "public.app-category.utilities"
+        }
+    },
+    "repository": "https://github.com/maciejczyzewski/airtrash",
+    "keywords": [
+        "file",
+        "airdrop",
+        "lan",
+        "wireless",
+        "p2p"
+    ],
+    "author": "Maciej A. Czyzewski",
+    "license": "MIT",
+    "devDependencies": {
+        "electron": "^7.1.7",
+        "electron-builder": "^21.2.0",
+        "electron-rebuild": "^1.8.8",
+        "node-gyp": "^5.0.7"
+    },
+    "dependencies": {
+        "bindings": "^1.5.0",
+        "bootstrap": "^4.4.1",
+        "jquery": "^3.4.1",
+        "mustache": "^3.2.0",
+        "nan": "^2.14.0",
+        "normalize.css": "^8.0.1",
+        "popper.js": "^1.16.0",
+        "worker-farm": "^1.7.0"
+    }
 }

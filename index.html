@@ -1,19 +1,41 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="node_modules/normalize.css/normalize.css" />
+    <link
+      rel="stylesheet"
+      href="node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
 
-    <!-- You can also require other files to run in this process -->
-    <script src="./renderer.js"></script>
+    <title>airtrash</title>
+  </head>
+  <body class="bg-light">
+    <div class="box">
+      <div class="section header">
+        <table
+          class="bd-highlight table table-striped table-sm"
+          id="files"
+        ></table>
+      </div>
+      <div class="section content">
+        <footer id="dropzone" class="mt-auto p-4 bd-highlight">
+          <div class="container">
+            <img class="icon" src="icon.svg" />
+            <span class="text-muted"
+              >Attach files by dragging & dropping<br />... or
+              <a href="#" id="manual">choose a path</a></span
+            >
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script>
+      window.$ = window.jquery = require('jquery');
+      window.popper = require('popper.js');
+      require('bootstrap');
+    </script>
   </body>
 </html>
