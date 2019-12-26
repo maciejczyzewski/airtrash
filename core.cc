@@ -13,15 +13,17 @@
 #include <vector>
 
 #include "config.h"
+#include "core.h"
 #include "net.h"
 #include "pipe.h"
 #include "socket.h"
 #include "util.h"
-#include "core.h"
 
 typedef std::string str;
 
-#define CLOSE_AND_RETURN close(sock); return;
+#define CLOSE_AND_RETURN                                                       \
+  close(sock);                                                                 \
+  return;
 
 void core_handle(int sock, Address client_address, str path) {
   printf("(SERVER) pull request from %s:%d\n", client_address.ip.c_str(),
@@ -42,8 +44,8 @@ void core_handle(int sock, Address client_address, str path) {
 
   FILE *fp = fopen(path.c_str(), "rb");
   if (fp == NULL) {
-      printf("(SERVER) \033[91mERROR: error opening file `%s`\033[m\n",
-         path.c_str());
+    printf("(SERVER) \033[91mERROR: error opening file `%s`\033[m\n",
+           path.c_str());
     CLOSE_AND_RETURN;
   }
 
@@ -79,6 +81,9 @@ void core_server_hook(Address address, str path) {
   Socket socket = Socket(net_first_free_slot(address));
   socket.fullduplex();
 
+  std::vector<std::thread> T;
+
+  // FIXME: signal to kill server
   while (true) {
     if ((sock = accept(socket.sock,
                        (struct sockaddr *)&client_address.unix_sockaddr,
@@ -87,7 +92,10 @@ void core_server_hook(Address address, str path) {
     }
 
     client_address.propagate();
-    core_handle(sock, client_address, path);
+
+    std::thread core_task(core_handle, std::cref(sock),
+                          std::cref(client_address), std::cref(path));
+    T.push_back(move(core_task));
   }
 
   socket.close();
@@ -112,8 +120,7 @@ void core_client_hook(Address address, str path) {
 
   int tries = AIRTRASH_MAX_TRIES;
   while (tries > 0) {
-    while ((recvlen =
-                (int)read(socket.sock, buff, AIRTRASH_BUFFER_SIZE)) > 0) {
+    while ((recvlen = (int)read(socket.sock, buff, AIRTRASH_BUFFER_SIZE)) > 0) {
       printf("(CLIENT) bytes received %d\n", recvlen);
       fwrite(buff, sizeof *buff, recvlen, fp);
       tries = AIRTRASH_MAX_TRIES;
