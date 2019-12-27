@@ -157,15 +157,15 @@ adding icon/buttons inside/drag for macos?
 
 ### 5: adding native extension ([@nodejs/nan](https://github.com/nodejs/nan) C++ library)
 
-bla bla bla/binding gyp/src/some methods
+Refer to a [quick-start **Nan** Boilerplate](https://github.com/fcanas/node-native-boilerplate) for a ready-to-go project that utilizes basic Nan functionality (Node Native Extension).
 
 1. Run:
 ```bash
 $ yarn add electron-builder --dev
-$ yarn add electron-rebuild --dev
+$ yarn add electron-rebuild --dev # to fix some common problems
 ```
 
-2: Modify:
+2. Modify:
 ```diff
     "scripts": {
         "start": "electron .",
@@ -190,6 +190,75 @@ $ yarn add electron-rebuild --dev
             "category": "public.app-category.utilities"
         }
     },
+```
+
+3. Add `binding.gyp`:
+```diff
+{
+  "targets": [
+    {
+      "target_name": "airtrash",
+      "sources": [
+        "airtrash.cc",
+        "src/api.cc",
+      ],
+      "include_dirs" : [
+        "<!(node -e \"require('nan')\")"
+      ]
+    }
+  ],
+}
+```
+
+4. Add these files:
+`airtrash.cc`:
+```c++
+#include "src/api.h"
+
+using v8::FunctionTemplate;
+
+#define NAN_REGISTER(name) \
+  Nan::Set(target, Nan::New(#name).ToLocalChecked(), \
+           Nan::GetFunction(Nan::New<FunctionTemplate>(name)).ToLocalChecked());
+
+
+NAN_MODULE_INIT(InitAll) {
+  NAN_REGISTER(return_a_string);
+}
+
+NODE_MODULE(airtrash, InitAll)
+```
+
+`src/api.cc`:
+```c++
+#include "api.h"
+
+void return_a_string(const Nan::FunctionCallbackInfo<v8::Value> &args) {
+  std::string val_example = "haha, just a string ;-)"
+  args.GetReturnValue().Set(
+      Nan::New<v8::String>(val_example).ToLocalChecked());
+}
+```
+
+`src/api.h`:
+```c++
+#ifndef NATIVE_EXTENSION_GRAB_H
+#define NATIVE_EXTENSION_GRAB_H
+
+#include <nan.h>
+
+#include "config.h"
+
+NAN_METHOD(return_a_string);
+
+#endif
+```
+
+5. Test in `main.js`:
+```js
+var NativeExtension = require("bindings")("airtrash");
+console.log(NativeExtension.return_a_string());
+// => haha, just a string ;-)
 ```
 
 ### 6: registering methods for native module
