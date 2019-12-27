@@ -147,7 +147,7 @@ And have this additional files:
 
 Let's add some popular package (like _bootstrap_) to understand how to do it.
 
-1. Run: `$ yarn add bootstrap --dev`
+1. Run:
 ```bash
 $ yarn add bootstrap --dev
 $ yarn add normalize.css --dev # good practise
