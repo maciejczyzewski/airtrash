@@ -61,7 +61,40 @@ Let's begin our journey.
 
 ### 1: starting from template
 
-bla bla bla/why to use yarn (faster)
+Clone and run for a quick way to see Electron in action. From your command line:
+
+> `yarn` is strongly recommended instead of `npm`.
+
+```bash
+# Clone this repository
+$ git clone https://github.com/electron/electron-quick-start
+# Go into the repository
+$ cd electron-quick-start
+# Install dependencies
+$ yarn
+# Run the app
+$ yarn start
+```
+
+You should see:
+
+![](screen-1.png)
+
+And have this file structure:
+
+```bash
+.
+├── LICENSE.md        # - no one's bothered
+├── README.md         # - sometimes good to read
+├── index.html        # body: what you see
+├── main.js           # heart: electron window
+├── package-lock.json # - auto-generated
+├── package.json      # settings/configuration/packets management
+├── preload.js        # soul: application behavior
+└── renderer.js       # - do after rendering
+
+0 directories, 8 files
+```
 
 ### 2: using [@electron-userland/electron-builder](https://github.com/electron-userland/electron-builder) for packing things
 
