@@ -55,6 +55,18 @@ brew update && brew cask install airtrash
 
 (nice try, you can't)
 
+## 📃 Steps
+
+Let's begin our journey.
+
+### 1: starting from template
+
+bla bla bla
+
+### 2: using @electron-builder for packing things
+
+bla bla bla
+
 ## 🤝 Contribute [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
 
 If you are interested in participating in joint development, PR and Forks are welcome!
