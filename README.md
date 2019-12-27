@@ -103,7 +103,7 @@ up.
 
 1. Run: `$ yarn add electron-builder --dev`
 
-2. Modify `package.json`:
+2. Modify _package.json_:
 ```diff
 +   "name": "airtrash",
     "scripts": {
@@ -145,11 +145,51 @@ And have this additional files:
 
 ### 3: adding [@twbs/bootstrap](https://github.com/twbs/bootstrap) to project
 
-how to install via yarn/how to include/settings nodeActived/removing headers
+Let's add some popular package (like _bootstrap_) to understand how to do it.
+
+1. Run: `$ yarn add bootstrap --dev`
+```bash
+$ yarn add bootstrap --dev
+$ yarn add normalize.css --dev # good practise
+$ yarn add popper.js --dev # bootstrap needs this
+$ yarn add jquery --dev # and this to be complete
+```
+
+2. Enable `nodeIntegration` in _main.js_:
+```diff
+    webPreferences : {
++      nodeIntegration : true,
+       preload : path.join(__dirname, 'app/preload.js'),
+    }
+```
+
+3. Modify _index.html_:
+```diff
+<head>
+  <head>
+-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
++    <link rel="stylesheet" href="node_modules/normalize.css/normalize.css" />
++    <link
++      rel="stylesheet"
++      href="node_modules/bootstrap/dist/css/bootstrap.min.css"
++    />
+  ...
+  </head>
+  <body>
+  ...
++    <script>
++      window.$ = window.jquery = require('jquery');
++      window.popper = require('popper.js');
++      require('bootstrap');
++    </script>
+  </body>
+</html>
+```
 
 ### 4: customizing window/interface
 
-adding icon/buttons inside/drag for macos?
+adding icon/buttons inside/drag for macos?/removing headers
 
 ```diff
 +          "icon": "icon.png",
