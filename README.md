@@ -159,21 +159,37 @@ adding icon/buttons inside/drag for macos?
 
 bla bla bla/binding gyp/src/some methods
 
-1. Run: `$ yarn add electron-rebuild --dev`
+1. Run:
+```bash
+$ yarn add electron-builder --dev
+$ yarn add electron-rebuild --dev
+```
 
+2: Modify:
 ```diff
+    "scripts": {
+        "start": "electron .",
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder",
++       "build": "node-gyp build",
++       "configure": "node-gyp configure",
 +       "postinstall": "electron-builder install-app-deps && \
 +                       ./node_modules/.bin/electron-rebuild"
-
-+        "files": [
-+            "**/*",
-+            "build/Release/*"
-+        ],
-+        "asarUnpack": "build/Release/*",
-
-+        "build": "node-gyp build",
-+        "configure": "node-gyp configure",
-+          "nodeGypRebuild": true,
+    },
+    ...
+    "build": {
++       "files": [
++           "**/*",
++           "build/Release/*"
++       ],
++       "nodeGypRebuild": true,
++       "asarUnpack": "build/Release/*",
+        "appId": "maciejczyzewski.airtrash",
+        "mac": {
+            "icon": "icon.png",
+            "category": "public.app-category.utilities"
+        }
+    },
 ```
 
 ### 6: registering methods for native module
