@@ -44,19 +44,10 @@ brew update && brew cask install airtrash
 
 (nice try, you can't)
 
+## 🤝 Contribute [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
+
+If you are interested in participating in joint development, PR and Forks are welcome!
+
 ## 📜 License
 
-
-https://github.com/sindresorhus/Gifski
-https://github.com/cowbell/sharedrop
-https://github.com/seemoo-lab/opendrop
-https://github.com/donkeysharp/gocho
-https://nitroshare.net/
-https://github.com/Jery-Mong/flyfile
-
-```
-https://nodejs.org/api/addons.html
-https://blog.logrocket.com/node-js-multithreading-what-are-worker-threads-and-why-do-they-matter-48ab102f8b10/
-```
-
-[MIT](LICENSE.md)
+[MIT](LICENSE.md) Copyright (c) Maciej A. Czyzewski

@@ -1,7 +1,7 @@
 {
     "name": "airtrash",
     "version": "1.0.0",
-    "description": "?",
+    "description": "Clone of Apple's AirDrop - easy P2P file transfer powered by stupidity",
     "main": "main.js",
     "scripts": {
         "start": "electron .",
