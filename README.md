@@ -100,7 +100,7 @@ And have this file structure:
 
 Goal: bulding our `.dmg` file with everything packed up
 
-1. `$ yarn add electron-builder --dev`
+1. Run: `$ yarn add electron-builder --dev`
 
 2. Modify `package.json`:
 ```diff
@@ -108,16 +108,10 @@ Goal: bulding our `.dmg` file with everything packed up
         "start": "electron .",
 +       "pack": "electron-builder --dir",
 +       "dist": "electron-builder",
-+       "postinstall": "electron-builder install-app-deps && \
-+                       ./node_modules/.bin/electron-rebuild"
++       "postinstall": "electron-builder install-app-deps"
     },
     ...
 +    "build": {
-+        "files": [
-+            "**/*",
-+            "build/Release/*"
-+        ],
-+        "asarUnpack": "build/Release/*",
 +        "appId": "maciejczyzewski.airtrash",
 +        "mac": {
 +            "category": "public.app-category.utilities"
@@ -143,8 +137,18 @@ adding icon/buttons inside/drag for macos?
 
 bla bla bla/binding gyp/src/some methods
 
+1. Run: ``$ yarn add electron-rebuild --dev`
 
 ```diff
++       "postinstall": "electron-builder install-app-deps && \
++                       ./node_modules/.bin/electron-rebuild"
+
++        "files": [
++            "**/*",
++            "build/Release/*"
++        ],
++        "asarUnpack": "build/Release/*",
+
 +        "build": "node-gyp build",
 +        "configure": "node-gyp configure",
 +          "nodeGypRebuild": true,
