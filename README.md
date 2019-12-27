@@ -332,6 +332,40 @@ bla bla bla/register function and importing from node.js
 
 why there are pull.js/push.js/article link
 
+1. Run: `$ yarn add worker-farm --dev`
+
+2. Create file _app/push.js_:
+```js
+var NativeExtension = require('bindings')('airtrash');
+
+module.exports = (input, callback) => {
+  console.log("PUSH", input.address, input.path)
+  NativeExtension.push(input.address, input.path)
+  callback(null, input)
+}
+```
+
+3. Then when we run this:
+```js
+const workerFarm = require("worker-farm");
+const service_push = workerFarm(require.resolve("./push"));
+service_push(data,
+               function(err, output) {
+                 new Notification(
+                     "Transmission Closed!",
+                     {body : output.path + " from " + output.address})
+               });
+console.log("hello!");
+```
+
+Result should be (random order of lines):
+```
+hello!
+PUSH 192.168.0.?:9000
+<killing service signal>
+Transmission Closed!
+```
+
 ### 8: creating basic interface in `preload.js`
 
 why we don't need frameworks (overkill)/very simple
@@ -340,25 +374,7 @@ why we don't need frameworks (overkill)/very simple
 
 port serving (my dravings)/push/pull/explore
 
-### 10: pasting from stackoverflow (how to get ip address)
-
-bla bla bla
-
-### 11: TCP/socket buffer size, does it matters?
-
-why we need to iterate trough send/recv
-
-```diff
-// babel.config.js
-module.exports = {
-  presets: [
-    ['@babel/preset-env', {targets: {node: 'current'}}],
-+    '@babel/preset-typescript',
-  ],
-};
-```
-
-### 12: still writing...
+### 10: still writing...
 
 ## 🤝 Contribute [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
 
