@@ -98,7 +98,8 @@ And have this file structure:
 
 ### 2: using [@electron-userland/electron-builder](https://github.com/electron-userland/electron-builder) for packing things
 
-Goal: bulding our `.dmg` file with everything packed up
+Our next goal will be to build `.dmg` and `.app` files with everything packed
+up.
 
 1. Run: `$ yarn add electron-builder --dev`
 
@@ -138,7 +139,7 @@ $ electron-builder
 ✨  Done in 59.42s.
 ```
 
-And:
+And have this additional files:
 
 ![](screen-2.png)
 
