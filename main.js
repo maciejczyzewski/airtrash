@@ -9,6 +9,7 @@ let mainWindow
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
+    titleBarStyle: 'hiddenInset',
     width : 625,
     height : 400,
     // resizable: false,
