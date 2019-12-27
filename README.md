@@ -13,8 +13,10 @@ English | [简体中文](#) | [हिन्दी](#)
 
 ## Goal
 
+> 100 tiny steps to build cross-platform desktop application using Electron/Node.js/C++
+
 It's simple tutorial/guide for **absolute beginners** to present some tips for
-creating desktop application. Unlike ![electron/electron-quick-start](https://github.com/electron/electron-quick-start), which presents the typical `hello world`.
+creating desktop application. Unlike [@electron/electron-quick-start](https://github.com/electron/electron-quick-start), which presents the typical `hello world`.
 This project aims to **focus on real-live scenario**, where we will try to implement
 a complete product (like cross-platform _Apple's AirDrop_ replacement).
 
