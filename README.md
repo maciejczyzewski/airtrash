@@ -61,11 +61,53 @@ Let's begin our journey.
 
 ### 1: starting from template
 
-bla bla bla
+bla bla bla/why to use yarn (faster)
 
-### 2: using @electron-builder for packing things
+### 2: using @electron-userland/electron-builder for packing things
 
-bla bla bla
+bla bla bla/setting package.json
+
+### 3: adding @twbs/bootstrap to project
+
+how to install via yarn/how to include/settings nodeActived/removing headers
+
+### 4: customizing window/interface
+
+adding icon/buttons inside/drag for macos?
+
+### 5: adding native extension (C++ library)
+
+bla bla bla/binding gyp/src/some methods
+
+### 6: registering methods for native module
+
+bla bla bla/register function and importing from node.js
+
+### 7: we don't have threads, how to handle this
+
+why there are pull.js/push.js/article link
+
+### 8: creating basic interface in `preload.js`
+
+why we don't need frameworks (overkill)/very simple
+
+### 9: idea behind simple P2P (naive but should work)
+
+port serving (my dravings)/push/pull/explore
+
+### 10: TCP buffer size, does it matters?
+
+why we need to iterate trough write
+
+```diff
+// babel.config.js
+module.exports = {
+  presets: [
+    ['@babel/preset-env', {targets: {node: 'current'}}],
++    '@babel/preset-typescript',
+  ],
+};
+```
 
 ## 🤝 Contribute [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
 
