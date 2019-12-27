@@ -104,6 +104,7 @@ Goal: bulding our `.dmg` file with everything packed up
 
 2. Modify `package.json`:
 ```diff
++   "name": "airtrash",
     "scripts": {
         "start": "electron .",
 +       "pack": "electron-builder --dir",
@@ -119,7 +120,27 @@ Goal: bulding our `.dmg` file with everything packed up
 +    },
 ```
 
-bla bla bla/setting package.json
+3. Run: `yarn dist`
+
+You should see:
+
+```
+$ electron-builder
+  • electron-builder  version=21.2.0 os=17.7.0
+  • loaded configuration  file=package.json ("build" field)
+  • writing effective config  file=dist/builder-effective-config.yaml
+  • packaging       platform=darwin arch=x64 electron=7.1.7 appOutDir=dist/mac
+  • default Electron icon is used  reason=application icon is not set
+  • building        target=macOS zip arch=x64 file=dist/airtrash-1.0.0-mac.zip
+  • building        target=DMG arch=x64 file=dist/airtrash-1.0.0.dmg
+  • building block map  blockMapFile=dist/airtrash-1.0.0.dmg.blockmap
+  • building embedded block map  file=dist/airtrash-1.0.0-mac.zip
+✨  Done in 59.42s.
+```
+
+And:
+
+![](screen-2.png)
 
 ### 3: adding [@twbs/bootstrap](https://github.com/twbs/bootstrap) to project
 
@@ -137,7 +158,7 @@ adding icon/buttons inside/drag for macos?
 
 bla bla bla/binding gyp/src/some methods
 
-1. Run: ``$ yarn add electron-rebuild --dev`
+1. Run: `$ yarn add electron-rebuild --dev`
 
 ```diff
 +       "postinstall": "electron-builder install-app-deps && \
