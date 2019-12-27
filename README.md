@@ -98,6 +98,33 @@ And have this file structure:
 
 ### 2: using [@electron-userland/electron-builder](https://github.com/electron-userland/electron-builder) for packing things
 
+Goal: bulding our `.dmg` file with everything packed up
+
+1. `$ yarn add electron-builder --dev`
+
+2. Modify `package.json`:
+```diff
+    "scripts": {
+        "start": "electron .",
++       "pack": "electron-builder --dir",
++       "dist": "electron-builder",
++       "postinstall": "electron-builder install-app-deps && \
++                       ./node_modules/.bin/electron-rebuild"
+    },
+    ...
++    "build": {
++        "files": [
++            "**/*",
++            "build/Release/*"
++        ],
++        "asarUnpack": "build/Release/*",
++        "appId": "maciejczyzewski.airtrash",
++        "mac": {
++            "category": "public.app-category.utilities"
++        }
++    },
+```
+
 bla bla bla/setting package.json
 
 ### 3: adding [@twbs/bootstrap](https://github.com/twbs/bootstrap) to project
@@ -108,9 +135,20 @@ how to install via yarn/how to include/settings nodeActived/removing headers
 
 adding icon/buttons inside/drag for macos?
 
+```diff
++          "icon": "icon.png",
+```
+
 ### 5: adding native extension ([@nodejs/nan](https://github.com/nodejs/nan) C++ library)
 
 bla bla bla/binding gyp/src/some methods
+
+
+```diff
++        "build": "node-gyp build",
++        "configure": "node-gyp configure",
++          "nodeGypRebuild": true,
+```
 
 ### 6: registering methods for native module
 
