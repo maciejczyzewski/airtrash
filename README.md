@@ -1,15 +1,15 @@
+English | [简体中文](#) | [हिन्दी](#)
+
 <div align="center">
-	<img src="icon.png" width="150" height="150">
+	<img src="icon.png" width="125" height="125">
 	<h1>airtrash</h1>
 	<p>
 		<b>Clone of Apple's AirDrop - easy P2P file transfer powered by stupidity</b>
 	</p>
 	<br>
-	<br>
-	<br>
 </div>
 
-English | [简体中文](#) | [हिन्दी](#)
+## 🔦 Screenshot
 
 <img src="screen.gif" width="800">
 
