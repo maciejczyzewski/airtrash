@@ -7,7 +7,7 @@
 	<br>
 	<br>
 	<br>
-  <img src="icon.gif" width="500">
+  <img src="screen.gif" width="500">
 </div>
 
 https://github.com/sindresorhus/Gifski
