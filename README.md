@@ -63,11 +63,11 @@ Let's begin our journey.
 
 bla bla bla/why to use yarn (faster)
 
-### 2: using @electron-userland/electron-builder for packing things
+### 2: using [@electron-userland/electron-builder](https://github.com/electron-userland/electron-builder) for packing things
 
 bla bla bla/setting package.json
 
-### 3: adding @twbs/bootstrap to project
+### 3: adding [@twbs/bootstrap](https://github.com/twbs/bootstrap) to project
 
 how to install via yarn/how to include/settings nodeActived/removing headers
 
@@ -75,7 +75,7 @@ how to install via yarn/how to include/settings nodeActived/removing headers
 
 adding icon/buttons inside/drag for macos?
 
-### 5: adding native extension (C++ library)
+### 5: adding native extension ([@nodejs/nan](https://github.com/nodejs/nan) C++ library)
 
 bla bla bla/binding gyp/src/some methods
 
@@ -95,9 +95,13 @@ why we don't need frameworks (overkill)/very simple
 
 port serving (my dravings)/push/pull/explore
 
-### 10: TCP buffer size, does it matters?
+### 10: pasting from stackoverflow (how to get ip address)
 
-why we need to iterate trough write
+bla bla bla
+
+### 11: TCP/socket buffer size, does it matters?
+
+why we need to iterate trough send/recv
 
 ```diff
 // babel.config.js
