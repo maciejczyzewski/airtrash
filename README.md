@@ -189,11 +189,34 @@ $ yarn add jquery --dev # and this to be complete
 
 ### 4: customizing window/interface
 
-adding icon/buttons inside/drag for macos?/removing headers
+In Electron you can modify the window interface. Let's play with it.
+
+1. Change defaults (adding icon) in _main.js_:
 
 ```diff
-+          "icon": "icon.png",
+  mainWindow = new BrowserWindow({
++   titleBarStyle: 'hiddenInset',
++   width : 625,
++   height : 400,
++   // resizable: false, # user's don't like this option
+    webPreferences : {
+      nodeIntegration : true,
+      preload : path.join(__dirname, 'app/preload.js'),
++     icon : __dirname + '/icon.png'
+    }
+  })
 ```
+
+2. Because of `titleBarStyle: 'hiddenInset'`, it need to be defined new
+   _draggable_ element in window. It can be achieved by adding to _index.html_:
+```diff
++ <body style="-webkit-app-region: drag">
+```
+
+Result should be:
+
+![](screen-3.png)
+![](screen-4.png)
 
 ### 5: adding native extension ([@nodejs/nan](https://github.com/nodejs/nan) C++ library)
 
