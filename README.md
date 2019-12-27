@@ -66,13 +66,13 @@ Clone and run for a quick way to see Electron in action. From your command line:
 > `yarn` is strongly recommended instead of `npm`.
 
 ```bash
-# Clone this repository
+# clone this repository
 $ git clone https://github.com/electron/electron-quick-start
-# Go into the repository
+# go into the repository
 $ cd electron-quick-start
-# Install dependencies
+# install dependencies
 $ yarn
-# Run the app
+# run the app
 $ yarn start
 ```
 
@@ -89,7 +89,7 @@ And have this file structure:
 ├── index.html        # body: what you see
 ├── main.js           # heart: electron window
 ├── package-lock.json # - auto-generated
-├── package.json      # settings/configuration/packets management
+├── package.json      # configuration/package manager
 ├── preload.js        # soul: application behavior
 └── renderer.js       # - do after rendering
 
