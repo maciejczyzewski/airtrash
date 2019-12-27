@@ -192,7 +192,7 @@ $ yarn add electron-rebuild --dev # to fix some common problems
     },
 ```
 
-3. Add `binding.gyp`:
+3. Add _binding.gyp_:
 ```diff
 {
   "targets": [
@@ -211,7 +211,7 @@ $ yarn add electron-rebuild --dev # to fix some common problems
 ```
 
 4. Add these files:
-`airtrash.cc`:
+_airtrash.cc_:
 ```c++
 #include "src/api.h"
 
@@ -229,7 +229,7 @@ NAN_MODULE_INIT(InitAll) {
 NODE_MODULE(airtrash, InitAll)
 ```
 
-`src/api.cc`:
+_src/api.cc_:
 ```c++
 #include "api.h"
 
@@ -240,7 +240,7 @@ void return_a_string(const Nan::FunctionCallbackInfo<v8::Value> &args) {
 }
 ```
 
-`src/api.h`:
+_src/api.h_:
 ```c++
 #ifndef NATIVE_EXTENSION_GRAB_H
 #define NATIVE_EXTENSION_GRAB_H
@@ -254,7 +254,7 @@ NAN_METHOD(return_a_string);
 #endif
 ```
 
-5. Test in `main.js`:
+5. Test in _main.js_:
 ```js
 var NativeExtension = require("bindings")("airtrash");
 console.log(NativeExtension.return_a_string());
