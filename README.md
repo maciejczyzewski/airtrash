@@ -1,7 +1,5 @@
-![airtrash](screen.png)
-
 <div align="center">
-	<img src="icon.png" width="200" height="200">
+	<img src="icon.png" width="150" height="150">
 	<h1>airtrash</h1>
 	<p>
 		<b>Clone of Apple's AirDrop - easy P2P file transfer powered by stupidity</b>
@@ -9,9 +7,8 @@
 	<br>
 	<br>
 	<br>
+  <img src="icon.gif" width="500">
 </div>
-
-![](screen.gif)
 
 https://github.com/sindresorhus/Gifski
 https://github.com/cowbell/sharedrop
