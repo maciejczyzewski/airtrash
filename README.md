@@ -310,8 +310,6 @@ _src/api.h_:
 
 #include <nan.h>
 
-#include "config.h"
-
 NAN_METHOD(return_a_string);
 
 #endif
@@ -324,11 +322,7 @@ console.log(NativeExtension.return_a_string());
 // => haha, just a string ;-)
 ```
 
-### 6: registering methods for native module
-
-bla bla bla/register function and importing from node.js
-
-### 7: we don't have threads, how to handle this
+### 6: we don't have threads, how to handle this
 
 Recommended reading: [Node.js multithreading: What are Worker Threads and why do they matter?](https://blog.logrocket.com/node-js-multithreading-what-are-worker-threads-and-why-do-they-matter-48ab102f8b10/)
 
@@ -366,13 +360,13 @@ PUSH 192.168.0.?:9000
 Transmission Closed!
 ```
 
-### 8: creating basic interface in `preload.js`
-
-why we don't need frameworks (overkill)/very simple
-
-### 9: idea behind simple P2P (naive but should work)
+### 7: idea behind simple P2P (naive but should work)
 
 port serving (my dravings)/push/pull/explore
+
+### 8: still writing...
+
+### 9: still writing...
 
 ### 10: still writing...
 
