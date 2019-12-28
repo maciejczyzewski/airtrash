@@ -26,7 +26,7 @@ a complete product (**like cross-platform _Apple's AirDrop_ replacement**).
 
 ## 💽 Installation
 
-Download from [GitHub Releases](https://github.com/maciejczyzewski/airtrash/releases) and install it.
+**Download from [GitHub Releases](https://github.com/maciejczyzewski/airtrash/releases) and install it.**
 
 ### from source
 
@@ -367,13 +367,12 @@ It should define 3 main functions:
 - **scan**: iterates (like `nmap`) through defined ranged of ports for whole
     local network and sends message to test if they
     are used by our application (welcome token).
-- **push**: starts in new process server (called here a node) with shared filed (if someone sends correct request, starts new thread for this connection)
+- **push**: starts a server (called here node) in new process with shared filed (if someone sends correct request, it starts new thread for this connection)
 - **pull**: connects to server and downloads the data
 
 <img src="screen-5.png" width="500">
 
-To be a **real** P2P, nodes should be propagated through network (additionally
-only parts of files, not whole).
+To be a **real** P2P, nodes should be propagated (without user action) through network (additionally only parts of files, not whole).
 
 ### 8: still writing...
 
