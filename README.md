@@ -224,7 +224,7 @@ Refer to a [quick-start **Nan** Boilerplate](https://github.com/fcanas/node-nati
 
 1. Run:
 ```bash
-$ yarn add electron-builder --dev
+$ yarn add node-gyp --dev
 $ yarn add electron-rebuild --dev # to fix some common problems
 ```
 
@@ -330,7 +330,7 @@ bla bla bla/register function and importing from node.js
 
 ### 7: we don't have threads, how to handle this
 
-why there are pull.js/push.js/article link
+Recommended reading: [Node.js multithreading: What are Worker Threads and why do they matter?](https://blog.logrocket.com/node-js-multithreading-what-are-worker-threads-and-why-do-they-matter-48ab102f8b10/)
 
 1. Run: `$ yarn add worker-farm --dev`
 
