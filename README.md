@@ -364,7 +364,7 @@ Transmission Closed!
 
 port serving (my dravings)/push/pull/explore
 
-<img src="screen-5.png" width="800">
+<img src="screen-5.png" width="500">
 
 ### 8: still writing...
 
