@@ -9,7 +9,7 @@ English | [简体中文](#) | [हिन्दी](#)
 	<br>
 </div>
 
-[![Build Status](https://travis-ci.org/maciejczyzewski/bottomline.png)](https://travis-ci.org/maciejczyzewski/bottomline) [![GitHub release](https://img.shields.io/github/release/maciejczyzewski/airtrash.svg)](https://github.com/maciejczyzewski/airtrash/releases) [![Total Downloads](https://img.shields.io/github/downloads/maciejczyzewski/airtrash/total.svg)](https://github.com/maciejczyzewski/airtrash/releases)
+[![Build Status](https://travis-ci.org/maciejczyzewski/bottomline.png)](https://travis-ci.org/maciejczyzewski/bottomline) [![GitHub release](https://img.shields.io/github/release/maciejczyzewski/airtrash.svg)](https://github.com/maciejczyzewski/airtrash/releases)
 
 ## 🔦 Screenshot
 
