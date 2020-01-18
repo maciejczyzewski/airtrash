@@ -4,9 +4,10 @@ const workerFarm = require("worker-farm"),
 var mustache = require("mustache"),
     NativeExtension = require("bindings")("airtrash");
 const service_push = workerFarm(require.resolve("./push")),
-      service_pull = workerFarm(require.resolve("./pull"));
+  service_pull = workerFarm(require.resolve("./pull")),
+  service_scan = workerFarm(require.resolve("./scan"));
 
-var PORT = 9000, REFRESH_MS = 3000, LOCAL_IP = NativeExtension.get_local_ip();
+var PORT = 9000, REFRESH_MS = 7000, LOCAL_IP = NativeExtension.get_local_ip();
 
 /// API ////////////////////////////////////////////////////////////////////////
 
@@ -46,13 +47,17 @@ function api_pull_file() {
 }
 
 function api_scan() {
-  var protocol = NativeExtension.scan().split("|").filter(Boolean),
+  // NativeExtension.scan().split("|").filter(Boolean)
+  service_scan(null,
+               function(err, output) {
+  var protocol = output,
       DOM = document.getElementById("files");
   DOM.innerHTML = "", protocol.forEach(function(item) {
     label = item.split("&"),
     gui_add_element(DOM, {address : label[0], path : label[1]})
   }),
-  0 < protocol.length && gui_add_listeners("download", api_pull_file)
+                   0 < protocol.length && gui_add_listeners("download", api_pull_file)
+               })
 }
 
 /// GUI ////////////////////////////////////////////////////////////////////////
@@ -102,5 +107,6 @@ window.addEventListener("DOMContentLoaded", () => {
                 api_push_file(item)
             })
       }),
+  api_scan(),
   setInterval(function() { api_scan() }, REFRESH_MS)
 });

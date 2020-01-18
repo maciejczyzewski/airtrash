@@ -1,6 +1,6 @@
 #include "api.h"
-#include "net.h"
 #include "core.h"
+#include "net.h"
 
 #define V8_CHECK_ARGS_2                                                        \
   if (args.Length() < 2) {                                                     \
@@ -39,7 +39,20 @@ void scan(const Nan::FunctionCallbackInfo<v8::Value> &args) {
     for (int port = AIRTRASH_PORT_LOW; port < AIRTRASH_PORT_HIGH; port++) {
       printf(".");
       str filename = net_is_open(ip, port);
-      if (strcmp(filename.c_str(), "") != 0) {
+      if (strcmp(filename.c_str(), "65") == 0) {
+        break;
+      }
+      if (strcmp(filename.c_str(), "64") == 0) {
+        break;
+      }
+      if (strcmp(filename.c_str(), "13") == 0) {
+        break;
+      }
+      if (strcmp(filename.c_str(), "22") == 0) {
+        break;
+      }
+      if (strcmp(filename.c_str(), "") != 0 and
+          filename.find("/") != std::string::npos) {
         printf("\n\033[92mOPEN\033[m %s:%d file=%s\n", ip.c_str(), port,
                filename.c_str());
         protocol +=
